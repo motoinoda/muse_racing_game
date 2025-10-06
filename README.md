@@ -1,4 +1,4 @@
-# Muse Race Game 🧠🏎️
+# Muse Racing Game 🧠🏎️
 
 脳波（集中度）でスピードをコントロールするレースゲーム
 
@@ -19,24 +19,6 @@ Muse EEGヘッドバンドから取得した脳波データをリアルタイム
 
 ## インストール
 
-### 1. リポジトリのクローン
-
-```bash
-git clone <repository-url>
-cd muse_race_game
-```
-
-### 2. 仮想環境の作成（推奨）
-
-```bash
-python3 -m venv venv
-source venv/bin/activate  # macOS/Linux
-# または
-venv\Scripts\activate  # Windows
-```
-
-### 3. 依存パッケージのインストール
-
 ```bash
 pip install -r requirements.txt
 ```
@@ -55,14 +37,20 @@ python muse_race_game.py
 python muse_viewer.py
 ```
 
-## ゲームの遊び方
+## レーシングゲームの遊び方
 
 1. Museヘッドバンドを装着し、電源を入れる
-2. プログラムを起動すると、デバイススキャンが開始される
+2. 「Scan for Muse」ボタンをクリックし，デバイススキャンを開始
 3. 「Connect」ボタンをクリックしてMuseデバイスに接続
-4. 接続後、脳波データの取得が自動的に開始される
-5. **集中する**ことで車のスピードが上がる
-6. トラックを完走してベストタイムを目指す
+4. Tutorial Mode をクリック後，Start Game をクリックし，脳波計測をテスト
+5. 安静時に Contact Quality が OK もしくは Good になるまで 電極の接触を調整
+6. 調整が完了したら，Stop をクリック
+7. Difficulty を選択し，Start Game をクリック
+8. **集中する**ことで車のスピードが上がる
+9. キーボードの矢印キーでレーを移動
+10. 障害物を避けながら制限時間内で，どこまで走れるのか挑戦してみよう！
+11. 「βパワーの左右差でレーン移動」にチェックを入れると脳波からレーン移動が可能（βパワーの左右差を見ているので，歯ぎしりなどの筋電による操作もできます）
+
 
 ## ファイル構成
 

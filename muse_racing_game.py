@@ -4,6 +4,9 @@ Muse Mind Control Racing Game
 脳波（集中度）でスピードをコントロールするレースゲーム
 """
 
+import os
+os.environ['OBJC_DISABLE_INITIALIZE_FORK_SAFETY'] = 'YES'
+
 import sys
 import asyncio
 import numpy as np
@@ -266,20 +269,22 @@ class RaceGame(QtWidgets.QWidget):
         if self.game_over or self.game_clear:
             return
 
-        # 開始時刻の記録
-        if self.start_time is None:
-            self.start_time = time.time()
+        # チュートリアルモード以外では時間制限を適用
+        if not self.tutorial_mode:
+            # 開始時刻の記録
+            if self.start_time is None:
+                self.start_time = time.time()
 
-        # 残り時間の更新
-        elapsed = time.time() - self.start_time
-        self.remaining_time = self.time_limit - elapsed
+            # 残り時間の更新
+            elapsed = time.time() - self.start_time
+            self.remaining_time = self.time_limit - elapsed
 
-        # 時間切れでゲームクリア
-        if self.remaining_time <= 0:
-            self.remaining_time = 0.0  # 0.0で表示
-            self.game_clear = True
-            self.update()  # 画面を再描画してクリア画面を表示
-            return
+            # 時間切れでゲームクリア
+            if self.remaining_time <= 0:
+                self.remaining_time = 0.0  # 0.0で表示
+                self.game_clear = True
+                self.update()  # 画面を再描画してクリア画面を表示
+                return
 
         # スピードを集中度に基づいて更新
         target_speed = focus_score * 10.0  # 最大10ピクセル/フレーム
@@ -449,12 +454,12 @@ class RaceGame(QtWidgets.QWidget):
             painter.setPen(QtGui.QColor(0, 200, 0))
             painter.setFont(QtGui.QFont('Arial', 20, QtGui.QFont.Bold))
             painter.drawText(int(width * 0.25), 50, 'TUTORIAL MODE')
-
-        # 残り時間表示
-        painter.setPen(QtGui.QColor(255, 255, 255))
-        painter.setFont(QtGui.QFont('Arial', 28, QtGui.QFont.Bold))
-        time_text = f'Time: {self.remaining_time:.1f}s'
-        painter.drawText(int(width * 0.35), 40, time_text)
+        else:
+            # 残り時間表示（通常モードのみ）
+            painter.setPen(QtGui.QColor(255, 255, 255))
+            painter.setFont(QtGui.QFont('Arial', 28, QtGui.QFont.Bold))
+            time_text = f'Time: {self.remaining_time:.1f}s'
+            painter.drawText(int(width * 0.35), 40, time_text)
 
         # ゲームオーバー表示
         if self.game_over:
@@ -684,7 +689,7 @@ class MuseRaceGame(QtWidgets.QMainWindow):
 
         # 脳波操作モード切替
         left_panel.addWidget(QtWidgets.QLabel(''))
-        self.brain_control_checkbox = QtWidgets.QCheckBox('脳波で左右操作')
+        self.brain_control_checkbox = QtWidgets.QCheckBox('βパワーの左右差でレーン移動')
         self.brain_control_checkbox.stateChanged.connect(self.toggle_brain_control)
         left_panel.addWidget(self.brain_control_checkbox)
 
@@ -727,6 +732,18 @@ class MuseRaceGame(QtWidgets.QMainWindow):
         controls_label = QtWidgets.QLabel('【操作方法】\n← → : レーン切替\n      (3レーン)\n集中 : スピードUP\n左右脳 : レーン移動\n      (要ON)')
         controls_label.setStyleSheet('background-color: #f0f0f0; padding: 10px; border-radius: 5px;')
         left_panel.addWidget(controls_label)
+
+        # 脳波説明
+        help_label = QtWidgets.QLabel(
+            '【脳波について】\n'
+            'Theta波(4-8Hz): 眠気\n'
+            'Alpha波(8-13Hz): リラックス\n'
+            'Beta波(13-30Hz): 集中\n'
+            '\n'
+            '集中度 = Beta/(Alpha+Theta)'
+        )
+        help_label.setStyleSheet('background-color: #ECF0F1; padding: 10px; border-radius: 5px; font-size: 10px;')
+        left_panel.addWidget(help_label)
 
         left_panel.addStretch()
 
