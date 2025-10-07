@@ -15,7 +15,7 @@ Muse EEGヘッドバンドから取得した脳波データをリアルタイム
 
 - Python 3.11
 - Muse 2
-- macOS（Bluetooth LE対応）
+- PC（Bluetooth LE対応）
 
 ## インストール
 
