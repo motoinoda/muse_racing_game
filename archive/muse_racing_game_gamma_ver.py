@@ -769,9 +769,9 @@ class MuseRaceGame(QtWidgets.QMainWindow):
         # 棒グラフ用のデータ（左右チャンネル別）
         self.bar_items = {}
         # θL, θR, αL, αR, βL, βR, FocusL, FocusR
-        x_positions = [0, 0.5, 1.5, 2, 3, 3.5, 5, 5.5]
-        colors_left = ['#FFD700', '#FFA500', '#4ECDC4', '#00CED1', '#FF6B6B', '#DC143C', '#96CEB4', '#5FA777']
-        labels = ['Theta_L', 'Theta_R', 'Alpha_L', 'Alpha_R', 'Beta_L', 'Beta_R', 'Focus_L', 'Focus_R']
+        x_positions = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5]
+        colors_left = ['#FFD700', '#FFA500', '#4ECDC4', '#00CED1', '#FF6B6B', '#DC143C', '#DC6BFF', '#9347AD', '#96CEB4', '#5FA777']
+        labels = ['Theta_L', 'Theta_R', 'Alpha_L', 'Alpha_R', 'Beta_L', 'Beta_R', 'Gamma_L', 'Gamma_R', 'Focus_L', 'Focus_R']
 
         for i, (x, label, color) in enumerate(zip(x_positions, labels, colors_left)):
             bar = pg.BarGraphItem(x=[x], height=[0], width=0.4, brush=color)
@@ -779,7 +779,7 @@ class MuseRaceGame(QtWidgets.QMainWindow):
             self.bar_items[label] = bar
 
         # X軸のラベル設定
-        x_dict = {0.25: 'θ', 1.75: 'α', 3.25: 'β', 5.25: 'Focus'}
+        x_dict = {0.25: 'θ', 1.25: 'α', 2.25: 'β', 3.25: 'γ', 4.25: 'Focus'}
         x_axis = self.power_plot.getAxis('bottom')
         x_axis.setTicks([list(x_dict.items())])
 
@@ -1167,6 +1167,9 @@ class MuseRaceGame(QtWidgets.QMainWindow):
         alpha_right = powers.get('alpha_right', 0)
         beta_left = powers.get('beta_left', 0)
         beta_right = powers.get('beta_right', 0)
+        gamma_left = powers.get('gamma_left', 0)
+        gamma_right = powers.get('gamma_right', 0)
+
 
         # 対数スケールでパワー値を変換（0-100スケール）
         # log10を使用し、EEGパワーの典型的な範囲（10^2 〜 10^8）にマッピング
@@ -1187,6 +1190,8 @@ class MuseRaceGame(QtWidgets.QMainWindow):
         self.bar_items['Alpha_R'].setOpts(height=[power_to_log_scale(alpha_right)])
         self.bar_items['Beta_L'].setOpts(height=[power_to_log_scale(beta_left)])
         self.bar_items['Beta_R'].setOpts(height=[power_to_log_scale(beta_right)])
+        self.bar_items['Gamma_L'].setOpts(height=[power_to_log_scale(gamma_left)])
+        self.bar_items['Gamma_R'].setOpts(height=[power_to_log_scale(gamma_right)])
         self.bar_items['Focus_L'].setOpts(height=[self.focus_left * 100])  # 0-100スケール
         self.bar_items['Focus_R'].setOpts(height=[self.focus_right * 100])  # 0-100スケール
 
