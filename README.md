@@ -28,7 +28,7 @@ pip install -r requirements.txt
 ### レースゲームの起動
 
 ```bash
-python muse_race_game.py
+python muse_racing_game.py
 ```
 
 ### 脳波ビューアの起動（データ確認用）
