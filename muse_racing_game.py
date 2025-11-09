@@ -229,6 +229,7 @@ class RaceGame(QtWidgets.QWidget):
 
         # 難易度設定（障害物の出現頻度）
         self.difficulty_base_prob = 0.015  # デフォルトはNormal
+        self.difficulty_level = 'normal'  # 'easy', 'normal', 'hard'
 
         # 脳波操作用
         self.brain_control_enabled = False
@@ -330,8 +331,8 @@ class RaceGame(QtWidgets.QWidget):
         score_factor = min(0.025, (self.score / 1000) * 0.05)
         obstacle_prob = base_prob + score_factor
 
-        # 障害物生成（チュートリアルモードでは生成しない）
-        if not self.tutorial_mode and self.obstacle_cooldown == 0 and np.random.random() < obstacle_prob:
+        # 障害物生成（チュートリアルモードでも生成するが、当たり判定は無効）
+        if self.obstacle_cooldown == 0 and np.random.random() < obstacle_prob:
             # 現在画面上にある障害物のレーンを確認
             # より広い範囲（車2台分程度）のスペースを空ける
             occupied_lanes = set()
@@ -342,8 +343,8 @@ class RaceGame(QtWidgets.QWidget):
             # 利用可能なレーンを決定（占有されていないレーン）
             available_lanes = [l for l in [0, 1, 2] if l not in occupied_lanes]
 
-            # 脳波操作モードの場合は最大1つの障害物のみ
-            if self.brain_control_enabled:
+            # 脳波操作モード、Easyモード、またはチュートリアルモードの場合は最大1つの障害物のみ
+            if self.brain_control_enabled or self.difficulty_level == 'easy' or self.tutorial_mode:
                 if len(available_lanes) > 0:
                     # ランダムに1つのレーンを選択
                     lane = np.random.choice(available_lanes)
@@ -382,8 +383,8 @@ class RaceGame(QtWidgets.QWidget):
                 self.obstacles.remove(obstacle)
                 continue
 
-            # 衝突判定：同じレーンにいて、Y座標が近い場合
-            if obstacle[0] == self.current_lane:
+            # 衝突判定：同じレーンにいて、Y座標が近い場合（チュートリアルモードでは無効）
+            if not self.tutorial_mode and obstacle[0] == self.current_lane:
                 # 車のY座標（画面の80%位置）
                 car_y_ratio = 0.8
                 obs_y_ratio = obstacle[1]
@@ -815,8 +816,9 @@ class MuseRaceGame(QtWidgets.QMainWindow):
         self.current_difficulty = difficulty
 
         # 難易度に応じて障害物の出現頻度を設定
+        self.race_game.difficulty_level = difficulty  # 難易度レベルを保存
         if difficulty == 'easy':
-            self.race_game.difficulty_base_prob = 0.005  # Easy: 1.0%
+            self.race_game.difficulty_base_prob = 0.015  # Easy: 操作ONと同じ
             print("🟢 Difficulty: EASY (障害物: 少なめ)")
         elif difficulty == 'normal':
             self.race_game.difficulty_base_prob = 0.1  # Normal: 1.5%
